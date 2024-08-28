@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Bar } from "react-chartjs-2";
+import { Bar, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend,
@@ -19,12 +20,14 @@ import {
   FilterContainer,
   Select,
   ChartContainer,
+  ChartsWrapper,
 } from "./AffiliatePerformanceReport.style";
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend
@@ -45,6 +48,7 @@ function AffiliatePerformanceReport() {
 
   const [reportData, setReportData] = useState(dummyAffiliateData);
   const [affiliates, setAffiliates] = useState([]);
+  const [productData, setProductData] = useState({});
 
   useEffect(() => {
     const filteredAffiliates =
@@ -81,6 +85,9 @@ function AffiliatePerformanceReport() {
         const existing = acc.find((data) => data.date === item.date);
         if (existing) {
           existing.linksShared += item.linksShared;
+          existing.productsMarketed = [
+            ...new Set([...existing.productsMarketed, ...item.productsMarketed]),
+          ];
         } else {
           acc.push({ ...item });
         }
@@ -90,9 +97,19 @@ function AffiliatePerformanceReport() {
     } else {
       setReportData(filteredData);
     }
+
+    // Aggregate product data
+    const productCounts = filteredData.reduce((acc, item) => {
+      item.productsMarketed.forEach((product) => {
+        acc[product] = (acc[product] || 0) + 1;
+      });
+      return acc;
+    }, {});
+
+    setProductData(productCounts);
   }, [selectedOccupation, selectedAffiliate, dateRange.start, dateRange.end]);
 
-  const chartData = {
+  const linksChartData = {
     labels: reportData.map((item) => item.date),
     datasets: [
       {
@@ -103,7 +120,23 @@ function AffiliatePerformanceReport() {
     ],
   };
 
-  const options = {
+  const productChartData = {
+    labels: Object.keys(productData),
+    datasets: [
+      {
+        data: Object.values(productData),
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.6)",
+          "rgba(54, 162, 235, 0.6)",
+          "rgba(255, 206, 86, 0.6)",
+          "rgba(75, 192, 192, 0.6)",
+          "rgba(153, 102, 255, 0.6)",
+        ],
+      },
+    ],
+  };
+
+  const linksChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -135,6 +168,24 @@ function AffiliatePerformanceReport() {
         title: {
           display: true,
           text: "Links Shared",
+        },
+      },
+    },
+  };
+
+  const productChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "right",
+      },
+      title: {
+        display: true,
+        text: "Most Marketed Products",
+        font: {
+          size: 16,
+          weight: "bold",
         },
       },
     },
@@ -176,9 +227,14 @@ function AffiliatePerformanceReport() {
         />
         <DateRangePicker control={control} name="dateRange" />
       </FilterContainer>
-      <ChartContainer>
-        <Bar data={chartData} options={options} />
-      </ChartContainer>
+      <ChartsWrapper>
+        <ChartContainer>
+          <Bar data={linksChartData} options={linksChartOptions} />
+        </ChartContainer>
+        <ChartContainer>
+          <Doughnut data={productChartData} options={productChartOptions} />
+        </ChartContainer>
+      </ChartsWrapper>
     </ReportContainer>
   );
 }
