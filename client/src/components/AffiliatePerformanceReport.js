@@ -77,24 +77,49 @@ const ChartContainer = styled.div`
 `;
 
 function AffiliatePerformanceReport() {
-  const { control, watch } = useForm({
+  const { control, watch, setValue } = useForm({
     defaultValues: {
+      occupation: "All",
       affiliate: "All",
       dateRange: { start: "", end: "" },
     },
   });
 
+  const selectedOccupation = watch("occupation");
   const selectedAffiliate = watch("affiliate");
   const dateRange = watch("dateRange");
 
   const [reportData, setReportData] = useState(dummyAffiliateData);
+  const [affiliates, setAffiliates] = useState([]);
+
+  useEffect(() => {
+ 
+    const filteredAffiliates =
+      selectedOccupation === "All"
+        ? Array.from(new Set(dummyAffiliateData.map((item) => item.affiliate)))
+        : Array.from(
+            new Set(
+              dummyAffiliateData
+                .filter((item) => item.occupation === selectedOccupation)
+                .map((item) => item.affiliate)
+            )
+          );
+
+    setAffiliates(filteredAffiliates);
+
+    if (!filteredAffiliates.includes(selectedAffiliate)) {
+      setValue("affiliate", "All");
+    }
+  }, [selectedOccupation, selectedAffiliate, setValue]);
 
   useEffect(() => {
     const filteredData = dummyAffiliateData.filter(
       (item) =>
+        (selectedOccupation === "All" ||
+          item.occupation === selectedOccupation) &&
         (selectedAffiliate === "All" || item.affiliate === selectedAffiliate) &&
-        (!dateRange.start || item.date >= dateRange.start) &&
-        (!dateRange.end || item.date <= dateRange.end)
+        (!dateRange.start || new Date(item.date) >= new Date(dateRange.start)) &&
+        (!dateRange.end || new Date(item.date) <= new Date(dateRange.end))
     );
 
     if (selectedAffiliate === "All") {
@@ -111,7 +136,7 @@ function AffiliatePerformanceReport() {
     } else {
       setReportData(filteredData);
     }
-  }, [selectedAffiliate, dateRange]);
+  }, [selectedOccupation, selectedAffiliate, dateRange.start, dateRange.end]);
 
   const chartData = {
     labels: reportData.map((item) => item.date),
@@ -136,6 +161,8 @@ function AffiliatePerformanceReport() {
         text:
           selectedAffiliate !== "All"
             ? `Performance Report for ${selectedAffiliate}`
+            : selectedOccupation !== "All"
+            ? `Performance Report for ${selectedOccupation}`
             : "Performance Report for All Affiliates",
         font: {
           size: 16,
@@ -164,14 +191,28 @@ function AffiliatePerformanceReport() {
       <ReportTitle>Affiliate Performance Report</ReportTitle>
       <FilterContainer>
         <Controller
+          name="occupation"
+          control={control}
+          render={({ field }) => (
+            <Select {...field}>
+              <option value="All">All Occupations</option>
+              {Array.from(
+                new Set(dummyAffiliateData.map((item) => item.occupation))
+              ).map((occupation) => (
+                <option key={occupation} value={occupation}>
+                  {occupation}
+                </option>
+              ))}
+            </Select>
+          )}
+        />
+        <Controller
           name="affiliate"
           control={control}
           render={({ field }) => (
             <Select {...field}>
               <option value="All">All Affiliates</option>
-              {Array.from(
-                new Set(dummyAffiliateData.map((item) => item.affiliate))
-              ).map((affiliate) => (
+              {affiliates.map((affiliate) => (
                 <option key={affiliate} value={affiliate}>
                   {affiliate}
                 </option>

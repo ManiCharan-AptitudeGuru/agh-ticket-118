@@ -94,6 +94,12 @@ function DateRangePicker({ control, name }) {
           type="date"
           {...startDateField}
           max={today}
+          onChange={(e) => {
+            startDateField.onChange(e);
+            if (e.target.value && (!endDateField.value || new Date(e.target.value) > new Date(endDateField.value))) {
+              endDateField.onChange(e.target.value);
+            }
+          }}
         />
         {startDateError && (
           <span style={{ color: "red" }}>{startDateError.message}</span>
@@ -107,6 +113,12 @@ function DateRangePicker({ control, name }) {
           {...endDateField}
           min={startDateField.value || "1900-01-01"}
           max={today}
+          onChange={(e) => {
+            endDateField.onChange(e);
+            if (e.target.value && (!startDateField.value || new Date(e.target.value) < new Date(startDateField.value))) {
+              startDateField.onChange(e.target.value);
+            }
+          }}
         />
         {endDateError && (
           <span style={{ color: "red" }}>{endDateError.message}</span>
