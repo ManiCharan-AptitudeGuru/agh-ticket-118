@@ -1,41 +1,11 @@
 import React, { useEffect } from "react";
-import styled from "styled-components";
 import { useController } from "react-hook-form";
-
-const DatePickerContainer = styled.div`
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-`;
-
-const DateInputGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Label = styled.label`
-  font-size: 0.9rem;
-  color: #3f51b5;
-  margin-bottom: 0.25rem;
-`;
-
-const DateInput = styled.input`
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #c5cae9;
-  font-size: 1rem;
-  color: #3f51b5;
-
-  &:focus {
-    outline: none;
-    border-color: #3f51b5;
-  }
-`;
+import {
+  DatePickerContainer,
+  DateInputGroup,
+  Label,
+  DateInput,
+} from "./DateRangePicker.style";
 
 function DateRangePicker({ control, name }) {
   if (!control || !name) {
@@ -96,7 +66,11 @@ function DateRangePicker({ control, name }) {
           max={today}
           onChange={(e) => {
             startDateField.onChange(e);
-            if (e.target.value && (!endDateField.value || new Date(e.target.value) > new Date(endDateField.value))) {
+            if (
+              e.target.value &&
+              (!endDateField.value ||
+                new Date(e.target.value) > new Date(endDateField.value))
+            ) {
               endDateField.onChange(e.target.value);
             }
           }}
@@ -115,7 +89,11 @@ function DateRangePicker({ control, name }) {
           max={today}
           onChange={(e) => {
             endDateField.onChange(e);
-            if (e.target.value && (!startDateField.value || new Date(e.target.value) < new Date(startDateField.value))) {
+            if (
+              e.target.value &&
+              (!startDateField.value ||
+                new Date(e.target.value) < new Date(startDateField.value))
+            ) {
               startDateField.onChange(e.target.value);
             }
           }}

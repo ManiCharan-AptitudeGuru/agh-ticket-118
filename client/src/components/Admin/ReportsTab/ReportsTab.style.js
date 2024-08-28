@@ -1,7 +1,6 @@
-import React from "react";
 import styled from "styled-components";
 
-const TabContainer = styled.div`
+export const TabContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   margin-bottom: 2rem;
@@ -13,7 +12,7 @@ const TabContainer = styled.div`
   }
 `;
 
-const TabButton = styled.button`
+export const TabButton = styled.button`
   padding: 0.75rem 1.5rem;
   background-color: ${(props) => (props.active ? "#3f51b5" : "#e8eaf6")};
   color: ${(props) => (props.active ? "#ffffff" : "#3f51b5")};
@@ -38,24 +37,3 @@ const TabButton = styled.button`
     font-size: 0.9rem;
   }
 `;
-
-function ReportsTab({ onSelectReport, activeReport }) {
-  return (
-    <TabContainer>
-      <TabButton
-        onClick={() => onSelectReport("product")}
-        active={activeReport === "product"}
-      >
-        Product Performance
-      </TabButton>
-      <TabButton
-        onClick={() => onSelectReport("affiliate")}
-        active={activeReport === "affiliate"}
-      >
-        Affiliate Performance
-      </TabButton>
-    </TabContainer>
-  );
-}
-
-export default ReportsTab;

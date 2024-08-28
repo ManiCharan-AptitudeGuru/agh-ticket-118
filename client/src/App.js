@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import styled from "styled-components";
-import Dashboard from "./pages/Dashboard";
-import ReportsPage from "./pages/ReportsPage";
-import NavBar from "./components/Navbar";
+import Dashboard from "./pages/Admin/Dashboard/Dashboard";
+import ReportsPage from "./pages/Admin/ReportsPage/ReportsPage";
+import NavBar from "./components/global/Navbar/Navbar";
 
 const AppContainer = styled.div`
   display: flex;

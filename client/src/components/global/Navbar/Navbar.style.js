@@ -1,8 +1,7 @@
-import React, { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
-const Nav = styled.nav`
+export const Nav = styled.nav`
   background-color: #3f51b5;
   padding: 0.5rem 2rem;
   position: fixed;
@@ -16,7 +15,7 @@ const Nav = styled.nav`
   }
 `;
 
-const NavContent = styled.div`
+export const NavContent = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -24,14 +23,14 @@ const NavContent = styled.div`
   margin: 0 auto;
 `;
 
-const Logo = styled(Link)`
+export const Logo = styled(Link)`
   color: #ffffff;
   font-size: 1.5rem;
   font-weight: bold;
   text-decoration: none;
 `;
 
-const NavList = styled.ul`
+export const NavList = styled.ul`
   list-style: none;
   display: flex;
   gap: 20px;
@@ -48,9 +47,9 @@ const NavList = styled.ul`
   }
 `;
 
-const NavItem = styled.li``;
+export const NavItem = styled.li``;
 
-const NavLink = styled(Link)`
+export const NavLink = styled(Link)`
   color: #ffffff;
   text-decoration: none;
   font-size: 1rem;
@@ -63,7 +62,7 @@ const NavLink = styled(Link)`
   }
 `;
 
-const MenuButton = styled.button`
+export const MenuButton = styled.button`
   display: none;
   background: none;
   border: none;
@@ -75,32 +74,3 @@ const MenuButton = styled.button`
     display: block;
   }
 `;
-
-function NavBar() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleMenu = () => setIsOpen(!isOpen);
-
-  return (
-    <Nav>
-      <NavContent>
-        <Logo to="/">Admin Panel</Logo>
-        <MenuButton onClick={toggleMenu}>☰</MenuButton>
-        <NavList isOpen={isOpen}>
-          <NavItem>
-            <NavLink to="/" onClick={() => setIsOpen(false)}>
-              Dashboard
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink to="/reports" onClick={() => setIsOpen(false)}>
-              Reports
-            </NavLink>
-          </NavItem>
-        </NavList>
-      </NavContent>
-    </Nav>
-  );
-}
-
-export default NavBar;
